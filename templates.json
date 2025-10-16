@@ -1,0 +1,358 @@
+{
+  "templates": [
+    {
+      "id": "explain_topic",
+      "name": "Explain Topic",
+      "description": "Get a clear explanation of any topic",
+      "icon": "bulb-outline",
+      "category": "general",
+      "scope": "general",
+      "prompt": "Please explain the following topic in a clear and understandable way:\n\nTopic: {{user_input}}\n\nProvide:\n1. A simple definition\n2. Key concepts\n3. Real-world examples\n4. Common misconceptions (if any)",
+      "placeholders": ["user_input"],
+      "examples": [
+        "What is photosynthesis?",
+        "Explain blockchain technology",
+        "What is DNA?"
+      ],
+      "subjects": ["math", "programming", "english", "general"]
+    },
+    {
+      "id": "summarize",
+      "name": "Summarize Text",
+      "description": "Create concise summaries",
+      "icon": "document-text-outline",
+      "category": "general",
+      "scope": "general",
+      "prompt": "Please create a clear and concise summary:\n\nText: {{user_input}}\n\nProvide:\n1. Main points (3-5 bullet points)\n2. Key takeaways\n3. Brief conclusion",
+      "placeholders": ["user_input"],
+      "examples": [
+        "Summarize this article...",
+        "Give me a summary of Chapter 5"
+      ],
+      "subjects": ["math", "programming", "english", "general"]
+    },
+    {
+      "id": "practice_quiz",
+      "name": "Practice Quiz",
+      "description": "Generate practice questions",
+      "icon": "help-circle-outline",
+      "category": "general",
+      "scope": "general",
+      "prompt": "Please create 5 practice questions about:\n\nTopic: {{user_input}}\n\nProvide:\n1. 5 multiple-choice questions\n2. Correct answers\n3. Brief explanations",
+      "placeholders": ["user_input"],
+      "examples": [
+        "World War II",
+        "Photosynthesis",
+        "Python functions"
+      ],
+      "subjects": ["math", "programming", "english", "general"]
+    },
+    {
+      "id": "eli5",
+      "name": "Explain Like I'm 5",
+      "description": "Super simple explanations",
+      "icon": "happy-outline",
+      "category": "general",
+      "scope": "general",
+      "prompt": "Please explain this in the simplest way possible, as if explaining to a 5-year-old:\n\nConcept: {{user_input}}\n\nUse:\n1. Simple language\n2. Fun analogies\n3. Easy examples",
+      "placeholders": ["user_input"],
+      "examples": [
+        "What is gravity?",
+        "How does the internet work?",
+        "What is electricity?"
+      ],
+      "subjects": ["math", "programming", "english", "general"]
+    },
+    {
+      "id": "math_solve_problem",
+      "name": "Solve Math Problem",
+      "description": "Step-by-step problem solving",
+      "icon": "calculator-outline",
+      "category": "math",
+      "scope": "math",
+      "prompt": "Please solve this math problem step-by-step:\n\nProblem: {{user_input}}\n\nProvide:\n1. Clear step-by-step solution\n2. Explanation for each step\n3. Final answer\n4. Tips to avoid common mistakes\n5. Similar practice problems",
+      "placeholders": ["user_input"],
+      "examples": [
+        "Solve: 2x + 5 = 13",
+        "Find the derivative of x^2 + 3x",
+        "Calculate the area of a circle with radius 5cm"
+      ],
+      "subjects": ["math"]
+    },
+    {
+      "id": "math_explain_formula",
+      "name": "Explain Formula",
+      "description": "Understand mathematical formulas",
+      "icon": "analytics-outline",
+      "category": "math",
+      "scope": "math",
+      "prompt": "Please explain this mathematical formula:\n\nFormula: {{user_input}}\n\nProvide:\n1. What the formula calculates\n2. Meaning of each variable\n3. When to use it\n4. Step-by-step example\n5. Common mistakes to avoid",
+      "placeholders": ["user_input"],
+      "examples": [
+        "Pythagorean theorem: a² + b² = c²",
+        "Quadratic formula",
+        "Distance formula"
+      ],
+      "subjects": ["math"]
+    },
+    {
+      "id": "math_word_problem",
+      "name": "Solve Word Problem",
+      "description": "Break down word problems",
+      "icon": "reader-outline",
+      "category": "math",
+      "scope": "math",
+      "prompt": "Please help solve this word problem:\n\nProblem: {{user_input}}\n\nProvide:\n1. What information is given\n2. What we need to find\n3. Which formula/method to use\n4. Step-by-step solution\n5. Answer with units",
+      "placeholders": ["user_input"],
+      "examples": [
+        "A train travels 120 km in 2 hours. What is its average speed?",
+        "John has 5 apples. He gives 2 to Mary. How many does he have left?"
+      ],
+      "subjects": ["math"]
+    },
+    {
+      "id": "math_practice_problems",
+      "name": "Generate Practice Problems",
+      "description": "Get similar problems to practice",
+      "icon": "create-outline",
+      "category": "math",
+      "scope": "math",
+      "prompt": "Based on this topic, generate 3 practice problems with solutions:\n\nTopic: {{user_input}}\n\nFor each problem provide:\n1. The problem\n2. Step-by-step solution\n3. Final answer\n4. Difficulty level (Easy/Medium/Hard)",
+      "placeholders": ["user_input"],
+      "examples": [
+        "Linear equations",
+        "Trigonometry",
+        "Probability"
+      ],
+      "subjects": ["math"]
+    },
+    {
+      "id": "math_check_work",
+      "name": "Check My Work",
+      "description": "Verify your solution",
+      "icon": "checkmark-circle-outline",
+      "category": "math",
+      "scope": "math",
+      "prompt": "Please check this mathematical work:\n\n{{user_input}}\n\nProvide:\n1. Is the answer correct?\n2. If wrong, where is the mistake?\n3. Correct solution\n4. Explanation of the error",
+      "placeholders": ["user_input"],
+      "examples": [
+        "Problem: 2+2\nMy answer: 5",
+        "Derivative of x^2 = 2x^2"
+      ],
+      "subjects": ["math"]
+    },
+    {
+      "id": "code_explain",
+      "name": "Explain Code",
+      "description": "Understand how code works",
+      "icon": "code-slash-outline",
+      "category": "programming",
+      "scope": "programming",
+      "prompt": "Please explain this code in detail:\n\nCode:\n{{user_input}}\n\nProvide:\n1. What the code does (high-level)\n2. Line-by-line explanation\n3. Input/Output examples\n4. Time/Space complexity (if applicable)\n5. Best practices used or missed",
+      "placeholders": ["user_input"],
+      "examples": [
+        "def factorial(n):\n    if n == 0:\n        return 1\n    return n * factorial(n-1)",
+        "const sum = arr.reduce((a, b) => a + b, 0)"
+      ],
+      "subjects": ["programming"]
+    },
+    {
+      "id": "code_write_function",
+      "name": "Write Function",
+      "description": "Generate code for a specific task",
+      "icon": "code-working-outline",
+      "category": "programming",
+      "scope": "programming",
+      "prompt": "Please write a function that does the following:\n\nTask: {{user_input}}\n\nProvide:\n1. Complete working code\n2. Comments explaining key parts\n3. Example usage\n4. Edge cases handled\n5. Alternative approaches (if any)",
+      "placeholders": ["user_input"],
+      "examples": [
+        "Check if a string is a palindrome",
+        "Sort an array of objects by a specific property",
+        "Validate an email address"
+      ],
+      "subjects": ["programming"]
+    },
+    {
+      "id": "code_debug",
+      "name": "Debug Code",
+      "description": "Find and fix bugs",
+      "icon": "bug-outline",
+      "category": "programming",
+      "scope": "programming",
+      "prompt": "Please help me debug this code:\n\nCode:\n{{user_input}}\n\nProvide:\n1. Identified bugs or errors\n2. Explanation of what's wrong\n3. Fixed version of the code\n4. Why the bug occurred\n5. How to prevent similar bugs",
+      "placeholders": ["user_input"],
+      "examples": [
+        "def factorial(n):\n    if n == 0:\n        return 1\n    return n * factorial(n)",
+        "for i in range(10):\n    print(i)\nprint(i)"
+      ],
+      "subjects": ["programming"]
+    },
+    {
+      "id": "code_review",
+      "name": "Code Review",
+      "description": "Get feedback on code quality",
+      "icon": "eye-outline",
+      "category": "programming",
+      "scope": "programming",
+      "prompt": "Please review this code:\n\nCode:\n{{user_input}}\n\nProvide:\n1. Code quality assessment (1-10)\n2. What's done well\n3. Issues found (bugs, style, performance)\n4. Refactoring suggestions\n5. Best practices to apply",
+      "placeholders": ["user_input"],
+      "examples": [
+        "def add(a, b):\n    return a + b",
+        "const users = data.filter(x => x.age > 18).map(x => x.name)"
+      ],
+      "subjects": ["programming"]
+    },
+    {
+      "id": "code_optimize",
+      "name": "Optimize Code",
+      "description": "Improve performance",
+      "icon": "speedometer-outline",
+      "category": "programming",
+      "scope": "programming",
+      "prompt": "Please optimize this code for better performance:\n\nCode:\n{{user_input}}\n\nProvide:\n1. Current complexity analysis\n2. Performance bottlenecks\n3. Optimized version\n4. Complexity improvement\n5. Trade-offs (if any)",
+      "placeholders": ["user_input"],
+      "examples": [
+        "def find_duplicates(arr):\n    result = []\n    for i in range(len(arr)):\n        for j in range(i+1, len(arr)):\n            if arr[i] == arr[j]:\n                result.append(arr[i])\n    return result"
+      ],
+      "subjects": ["programming"]
+    },
+    {
+      "id": "code_convert",
+      "name": "Convert Language",
+      "description": "Translate code between languages",
+      "icon": "swap-horizontal-outline",
+      "category": "programming",
+      "scope": "programming",
+      "prompt": "Please convert this code to another programming language:\n\nOriginal code:\n{{user_input}}\n\nProvide:\n1. Converted code\n2. Key differences explained\n3. Language-specific best practices\n4. Libraries/modules needed",
+      "placeholders": ["user_input"],
+      "examples": [
+        "Python: def add(a, b): return a + b\nConvert to JavaScript",
+        "JavaScript forEach to Python equivalent"
+      ],
+      "subjects": ["programming"]
+    },
+    {
+      "id": "english_grammar_check",
+      "name": "Grammar Check",
+      "description": "Fix grammar and spelling",
+      "icon": "checkmark-done-outline",
+      "category": "english",
+      "scope": "english",
+      "prompt": "Please check and correct the grammar in this text:\n\nText: {{user_input}}\n\nProvide:\n1. Corrected version\n2. List of errors found\n3. Explanation for each correction\n4. Grammar rules applied",
+      "placeholders": ["user_input"],
+      "examples": [
+        "I goes to school everyday",
+        "She don't like math",
+        "The cat and dog is playing"
+      ],
+      "subjects": ["english"]
+    },
+    {
+      "id": "english_translate",
+      "name": "Translate Text",
+      "description": "Translate between languages",
+      "icon": "language-outline",
+      "category": "english",
+      "scope": "english",
+      "prompt": "Please translate this text:\n\nText: {{user_input}}\n\nProvide:\n1. Translation\n2. Literal translation (if different)\n3. Cultural context (if relevant)\n4. Alternative phrasings",
+      "placeholders": ["user_input"],
+      "examples": [
+        "Hello, how are you? (to Spanish)",
+        "Translate to French: Good morning"
+      ],
+      "subjects": ["english"]
+    },
+    {
+      "id": "english_vocabulary",
+      "name": "Vocabulary Builder",
+      "description": "Learn new words and usage",
+      "icon": "book-outline",
+      "category": "english",
+      "scope": "english",
+      "prompt": "Please help me understand this word/phrase:\n\nWord/Phrase: {{user_input}}\n\nProvide:\n1. Definition\n2. Part of speech\n3. Synonyms and antonyms\n4. Example sentences (3-5)\n5. Common collocations\n6. Etymology (if interesting)",
+      "placeholders": ["user_input"],
+      "examples": [
+        "serendipity",
+        "break the ice",
+        "ubiquitous"
+      ],
+      "subjects": ["english"]
+    },
+    {
+      "id": "english_essay_outline",
+      "name": "Essay Outline",
+      "description": "Structure your essay",
+      "icon": "list-outline",
+      "category": "english",
+      "scope": "english",
+      "prompt": "Please create an essay outline for:\n\nTopic: {{user_input}}\n\nProvide:\n1. Thesis statement\n2. Introduction outline\n3. Body paragraphs (3-5) with main points\n4. Conclusion outline\n5. Suggested sources",
+      "placeholders": ["user_input"],
+      "examples": [
+        "The impact of social media on modern society",
+        "Climate change solutions",
+        "Technology in education"
+      ],
+      "subjects": ["english"]
+    },
+    {
+      "id": "english_paraphrase",
+      "name": "Paraphrase Text",
+      "description": "Rewrite in different words",
+      "icon": "refresh-outline",
+      "category": "english",
+      "scope": "english",
+      "prompt": "Please paraphrase this text:\n\nOriginal: {{user_input}}\n\nProvide:\n1. Paraphrased version\n2. Key changes made\n3. Maintained meaning confirmation\n4. Alternative version (different style)",
+      "placeholders": ["user_input"],
+      "examples": [
+        "The quick brown fox jumps over the lazy dog",
+        "Education is the most powerful weapon you can use to change the world"
+      ],
+      "subjects": ["english"]
+    },
+    {
+      "id": "english_improve_writing",
+      "name": "Improve Writing",
+      "description": "Enhance style and clarity",
+      "icon": "create-outline",
+      "category": "english",
+      "scope": "english",
+      "prompt": "Please improve this writing:\n\nText: {{user_input}}\n\nProvide:\n1. Improved version\n2. What was changed and why\n3. Style improvements\n4. Clarity enhancements\n5. Tone assessment",
+      "placeholders": ["user_input"],
+      "examples": [
+        "I think that maybe we should probably go to the store",
+        "The thing is very good and I like it a lot"
+      ],
+      "subjects": ["english"]
+    }
+  ],
+  "categories": [
+    {
+      "id": "general",
+      "name": "General",
+      "icon": "sparkles-outline",
+      "color": "#6366F1",
+      "description": "Universal templates for all subjects"
+    },
+    {
+      "id": "math",
+      "name": "Mathematics",
+      "icon": "calculator-outline",
+      "color": "#8B5CF6",
+      "description": "Problem solving, formulas, and calculations"
+    },
+    {
+      "id": "programming",
+      "name": "Programming",
+      "icon": "code-slash-outline",
+      "color": "#EC4899",
+      "description": "Code explanation, debugging, and development"
+    },
+    {
+      "id": "english",
+      "name": "English",
+      "icon": "book-outline",
+      "color": "#10B981",
+      "description": "Grammar, writing, vocabulary, and translation"
+    }
+  ]
+}
