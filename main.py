@@ -271,6 +271,97 @@ async def send_message(request: ChatRequest):
         print(f"❌ [Chat] Error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/api/chat/stream")
+async def chat_stream(request: ChatRequest):
+    """
+    Streaming chat endpoint - ответ приходит частями (Server-Sent Events)
+    """
+    async def generate():
+        try:
+            # Подготовка сообщений и выбор модели
+            messages, model = prepare_messages(
+                request.message,
+                request.subject,
+                request.conversationHistory
+            )
+            
+            print(f"🌊 [Stream] Starting stream for model: {model}")
+            
+            # Заголовки для OpenRouter
+            headers = {
+                "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+                "Content-Type": "application/json",
+                "HTTP-Referer": "https://study-helper.app",
+                "X-Title": "Study Helper"
+            }
+            
+            # Payload с включенным стримингом
+            payload = {
+                "model": model,
+                "messages": messages,
+                "temperature": 0.7,
+                "max_tokens": 3000,
+                "stream": True  # ← ВАЖНО! Включаем стриминг
+            }
+            
+            # Делаем streaming запрос к OpenRouter
+            async with httpx.AsyncClient(timeout=120.0) as client:
+                async with client.stream(
+                    "POST",
+                    OPENROUTER_URL,
+                    json=payload,
+                    headers=headers
+                ) as response:
+                    response.raise_for_status()
+                    
+                    # Читаем и пересылаем каждую строку
+                    async for line in response.aiter_lines():
+                        if line.strip():
+                            # OpenRouter отправляет в формате SSE
+                            if line.startswith("data: "):
+                                data_str = line[6:]  # Убираем "data: "
+                                
+                                # Проверяем на [DONE]
+                                if data_str.strip() == "[DONE]":
+                                    yield f"data: {json.dumps({'done': True})}\n\n"
+                                    break
+                                
+                                try:
+                                    # Парсим JSON
+                                    data = json.loads(data_str)
+                                    
+                                    # Извлекаем контент из ответа OpenRouter
+                                    if "choices" in data and len(data["choices"]) > 0:
+                                        delta = data["choices"][0].get("delta", {})
+                                        content = delta.get("content", "")
+                                        
+                                        if content:
+                                            # Отправляем клиенту
+                                            yield f"data: {json.dumps({'content': content})}\n\n"
+                                
+                                except json.JSONDecodeError:
+                                    continue
+                    
+                    print(f"✅ [Stream] Completed")
+                    
+        except httpx.HTTPError as e:
+            print(f"❌ [Stream] HTTP Error: {str(e)}")
+            error_msg = f"AI service error: {str(e)}"
+            yield f"data: {json.dumps({'error': error_msg})}\n\n"
+        except Exception as e:
+            print(f"❌ [Stream] Error: {str(e)}")
+            error_msg = f"Unexpected error: {str(e)}"
+            yield f"data: {json.dumps({'error': error_msg})}\n\n"
+    
+    return StreamingResponse(
+        generate(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+        }
+    )
+
 @app.get("/api/health")
 async def health_check():
     """Проверка работоспособности"""
