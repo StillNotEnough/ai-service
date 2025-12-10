@@ -1,0 +1,23 @@
+# ai-service/.dockerignore
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.coverage
+htmlcov/
+.git/
+.gitignore
+.env
+.venv/
+venv/
+*.md
+tests/
+.dockerignore
+Dockerfile
