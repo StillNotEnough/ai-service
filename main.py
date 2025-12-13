@@ -63,7 +63,7 @@ MODELS = {
     "math": "meta-llama/llama-3.3-70b-instruct:free",
     "programming": "qwen/qwen3-coder:free",
     "english": "deepseek/deepseek-chat-v3.1:free",
-    "general": "qwen/qwen3-235b-a22b:free",
+    "general": "meta-llama/llama-3.3-70b-instruct:free",
     # 🆕 НОВАЯ МОДЕЛЬ для Vision
     "vision": "google/gemini-2.0-flash-exp:free"
 }
