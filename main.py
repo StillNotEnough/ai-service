@@ -357,7 +357,16 @@ def prepare_messages(message: str, subject: str, history: List[ChatMessage]) -> 
 
 @app.get("/")
 async def root():
-    """Health check"""
+    """Root endpoint - приветствие API"""
+    return {
+        "message": "Study Helper AI Service",
+        "version": "1.1.0",
+        "docs": "/docs"  # Ссылка на Swagger документацию
+    }
+
+@app.get("/health")
+async def health():
+    """Health check для Docker и мониторинга"""
     return {
         "status": "ok",
         "service": "Study Helper AI Service",
