@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
-from typing import List, Optional, AsyncGenerator, Dict, Any
+from typing import List, Optional, Dict, Any
 import httpx
 import os
 import json
@@ -156,7 +156,7 @@ async def call_openrouter(messages: List[dict], model: str) -> str:
             response.raise_for_status()
             data = response.json()
             result = data["choices"][0]["message"]["content"]
-            print(f"✅ [OpenRouter] Success")
+            print("✅ [OpenRouter] Success")
             return result
         except httpx.HTTPError as e:
             print(f"❌ [OpenRouter] Error: {str(e)}")
