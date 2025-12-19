@@ -1,13 +1,14 @@
+import json
+import os
+from datetime import datetime
+from importlib.resources import files
+from typing import Any, Dict, List, Optional
+
+import httpx
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel
-from typing import List, Optional, Dict, Any
-import httpx
-import os
-import json
-from datetime import datetime
-from pathlib import Path
+from pydantic import BaseModel, Field
 
 app = FastAPI(title="Study Helper AI Service")
 
@@ -28,14 +29,14 @@ class ChatMessage(BaseModel):
 class ChatRequest(BaseModel):
     message: str
     subject: Optional[str] = "general"
-    conversationHistory: Optional[List[ChatMessage]] = []
+    conversationHistory: List[ChatMessage] = Field(default_factory=list)
     stream: Optional[bool] = False
 
 class TemplateRequest(BaseModel):
     template_id: str
     user_input: str
     subject: Optional[str] = "general"
-    conversationHistory: Optional[List[ChatMessage]] = []
+    conversationHistory: List[ChatMessage] = Field(default_factory=list)
     stream: Optional[bool] = False
 
 class ChatResponse(BaseModel):
@@ -67,10 +68,22 @@ MODELS = {
 }
 
 SUBJECT_PROMPTS = {
-    "math": """You are an expert math tutor. Be patient, encouraging, and adapt explanations to the student's level.""",
-    "programming": """You are an experienced programming mentor. Provide clear, practical code examples and explanations.""",
-    "english": """You are an experienced English language tutor. Provide constructive feedback and practical examples.""",
-    "general": """You are a helpful study assistant. Provide clear, accurate explanations and help students learn effectively."""
+    "math": (
+        "You are an expert math tutor. Be patient, encouraging, and adapt explanations "
+        "to the student's level."
+    ),
+    "programming": (
+        "You are an experienced programming mentor. Provide clear, practical code examples "
+        "and explanations."
+    ),
+    "english": (
+        "You are an experienced English language tutor. Provide constructive feedback and "
+        "practical examples."
+    ),
+    "general": (
+        "You are a helpful study assistant. Provide clear, accurate explanations and help "
+        "students learn effectively."
+    ),
 }
 
 
@@ -78,7 +91,7 @@ SUBJECT_PROMPTS = {
 
 class TemplateService:
     def __init__(self):
-        self.templates_file = Path("templates.json")
+        self.templates_file = files("ai_service.data").joinpath("templates.json")
         self.templates_cache = None
         self.load_templates()
     
@@ -86,7 +99,7 @@ class TemplateService:
         """Загрузка шаблонов из JSON файла"""
         try:
             if self.templates_file.exists():
-                with open(self.templates_file, 'r', encoding='utf-8') as f:
+                with self.templates_file.open("r", encoding="utf-8") as f:
                     self.templates_cache = json.load(f)
                 print(f"✅ Loaded {len(self.templates_cache.get('templates', []))} templates")
             else:
@@ -162,7 +175,11 @@ async def call_openrouter(messages: List[dict], model: str) -> str:
             print(f"❌ [OpenRouter] Error: {str(e)}")
             raise HTTPException(status_code=500, detail=f"AI service error: {str(e)}")
 
-def prepare_messages(message: str, subject: str, history: List[ChatMessage]) -> tuple[List[dict], str]:
+def prepare_messages(
+    message: str, 
+    subject: str, 
+    history: List[ChatMessage]
+    ) -> tuple[List[dict], str]:
     """Подготовка сообщений для AI"""
     model = MODELS.get(subject, MODELS["general"])
     system_prompt = SUBJECT_PROMPTS.get(subject, SUBJECT_PROMPTS["general"])
