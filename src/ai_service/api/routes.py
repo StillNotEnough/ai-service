@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, UTC
 from typing import Optional
 
 import httpx
@@ -98,7 +98,7 @@ async def chat_with_template(request: TemplateRequest):
 
         return ChatResponse(
             message=ai_response,
-            timestamp=datetime.utcnow().isoformat(),
+            timestamp=datetime.now(UTC).isoformat()
         )
 
     except ValueError as e:
@@ -124,7 +124,7 @@ async def send_message(request: ChatRequest):
 
         return ChatResponse(
             message=ai_response,
-            timestamp=datetime.utcnow().isoformat(),
+            timestamp=datetime.now(UTC).isoformat()
         )
 
     except Exception as e:
