@@ -3,7 +3,6 @@ import os
 from datetime import UTC, datetime
 from typing import Optional
 
-import os
 import httpx
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
