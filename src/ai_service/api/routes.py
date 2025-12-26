@@ -1,4 +1,5 @@
 import json
+import os
 from datetime import UTC, datetime
 from typing import Optional
 
@@ -23,7 +24,12 @@ async def root():
         "version": "1.1.0",
         "docs": "/docs",
     }
-
+    
+@router.get("/ready")
+async def ready():
+    if not os.getenv("OPENROUTER_API_KEY"):
+        raise HTTPException(status_code=503, detail="OPENROUTER_API_KEY missing")
+    return {"status": "ready"}
 
 @router.get("/health")
 async def health():
