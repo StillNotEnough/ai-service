@@ -3,4 +3,5 @@ venv/
 .env
 *.egg-info/
 *.pyc
-.venv/
+.venv/.env
+.env.env
