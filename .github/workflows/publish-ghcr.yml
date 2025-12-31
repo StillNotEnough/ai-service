@@ -1,4 +1,4 @@
-name: ai-service CI + Publish (GHCR)
+name: ai-service CI + Publish (GHCR) + GitOps
 
 on:
   pull_request:
@@ -37,13 +37,24 @@ jobs:
       - name: Tests
         run: python -m pytest -q
 
-  publish_image_and_gitops:
+  publish_image:
     needs: test
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 15
+    outputs:
+      short_sha: ${{ steps.img.outputs.short_sha }}
+      image: ${{ steps.img.outputs.image }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: Compute short sha + image tag
+        id: img
+        run: |
+          set -euo pipefail
+          SHORT_SHA="${GITHUB_SHA::7}"
+          echo "short_sha=${SHORT_SHA}" >> "$GITHUB_OUTPUT"
+          echo "image=ghcr.io/stillnotenough/ai-service:sha-${SHORT_SHA}" >> "$GITHUB_OUTPUT"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -75,15 +86,12 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      # ---------- GitOps: create PR in orchestrator ----------
-      - name: Compute short sha + image tag
-        id: img
-        run: |
-          set -euo pipefail
-          SHORT_SHA="${GITHUB_SHA::7}"
-          echo "short_sha=${SHORT_SHA}" >> "$GITHUB_OUTPUT"
-          echo "image=ghcr.io/stillnotenough/ai-service:sha-${SHORT_SHA}" >> "$GITHUB_OUTPUT"
-
+  gitops_orchestrator_pr:
+    needs: publish_image
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
       - name: Checkout orchestrator repo
         uses: actions/checkout@v4
         with:
@@ -95,7 +103,7 @@ jobs:
       - name: Update orchestrator manifest image (by container name)
         env:
           FILE_PATH: orchestrator/k8s/base/ai-service/deploymend.yaml
-          IMAGE: ${{ steps.img.outputs.image }}
+          IMAGE: ${{ needs.publish_image.outputs.image }}
         run: |
           set -euo pipefail
 
@@ -104,7 +112,7 @@ jobs:
 
           test -f "${FILE_PATH}"
 
-          # меняем image у контейнера name: ai-service
+          # Меняем image у контейнера name: ai-service
           yq -i '(.spec.template.spec.containers[] | select(.name=="ai-service") | .image) = strenv(IMAGE)' "${FILE_PATH}"
 
       - name: Create PR to orchestrator repo
@@ -113,16 +121,16 @@ jobs:
         with:
           token: ${{ secrets.ORCHESTRATOR_TOKEN }}
           path: orchestrator
-          branch: bump/ai-service-${{ steps.img.outputs.short_sha }}
+          branch: bump/ai-service-${{ needs.publish_image.outputs.short_sha }}
           base: main
-          commit-message: "chore(ai-service): bump image to sha-${{ steps.img.outputs.short_sha }}"
-          title: "chore(ai-service): bump image to sha-${{ steps.img.outputs.short_sha }}"
+          commit-message: "chore(ai-service): bump image to sha-${{ needs.publish_image.outputs.short_sha }}"
+          title: "chore(ai-service): bump image to sha-${{ needs.publish_image.outputs.short_sha }}"
           body: |
             Automated PR from ai-service CI.
-            Image: ${{ steps.img.outputs.image }}
+            Image: ${{ needs.publish_image.outputs.image }}
           labels: automated, ai-service
 
-      # full-auto (auto-merge) 
+      # full-auto (auto-merge)
       - name: Enable auto-merge for orchestrator PR
         if: steps.cpr.outputs.pull-request-number != ''
         env:
