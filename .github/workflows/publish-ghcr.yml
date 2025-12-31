@@ -37,12 +37,11 @@ jobs:
       - name: Tests
         run: python -m pytest -q
 
-
-  publish_image:
+  publish_image_and_gitops:
     needs: test
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 
@@ -75,3 +74,61 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      # ---------- GitOps: create PR in orchestrator ----------
+      - name: Compute short sha + image tag
+        id: img
+        run: |
+          set -euo pipefail
+          SHORT_SHA="${GITHUB_SHA::7}"
+          echo "short_sha=${SHORT_SHA}" >> "$GITHUB_OUTPUT"
+          echo "image=ghcr.io/stillnotenough/ai-service:sha-${SHORT_SHA}" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout orchestrator repo
+        uses: actions/checkout@v4
+        with:
+          repository: StillNotEnough/shpora-ai-orchestrator-prod
+          token: ${{ secrets.ORCHESTRATOR_TOKEN }}
+          path: orchestrator
+          ref: main
+
+      - name: Update orchestrator manifest image (by container name)
+        env:
+          FILE_PATH: orchestrator/k8s/base/ai-service/deploymend.yaml
+          IMAGE: ${{ steps.img.outputs.image }}
+        run: |
+          set -euo pipefail
+
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+          test -f "${FILE_PATH}"
+
+          # меняем image у контейнера name: ai-service
+          yq -i '(.spec.template.spec.containers[] | select(.name=="ai-service") | .image) = strenv(IMAGE)' "${FILE_PATH}"
+
+      - name: Create PR to orchestrator repo
+        id: cpr
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.ORCHESTRATOR_TOKEN }}
+          path: orchestrator
+          branch: bump/ai-service-${{ steps.img.outputs.short_sha }}
+          base: main
+          commit-message: "chore(ai-service): bump image to sha-${{ steps.img.outputs.short_sha }}"
+          title: "chore(ai-service): bump image to sha-${{ steps.img.outputs.short_sha }}"
+          body: |
+            Automated PR from ai-service CI.
+            Image: ${{ steps.img.outputs.image }}
+          labels: automated, ai-service
+
+      # full-auto (auto-merge) 
+      - name: Enable auto-merge for orchestrator PR
+        if: steps.cpr.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ secrets.ORCHESTRATOR_TOKEN }}
+        run: |
+          set -euo pipefail
+          gh pr merge ${{ steps.cpr.outputs.pull-request-number }} \
+            --repo StillNotEnough/shpora-ai-orchestrator-prod \
+            --squash --auto
