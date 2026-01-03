@@ -102,7 +102,7 @@ jobs:
 
       - name: Update orchestrator manifest image (by container name)
         env:
-          FILE_PATH: orchestrator/k8s/base/ai-service/deploymend.yaml
+          FILE_PATH: orchestrator/k8s/base/ai-service/deployment.yaml
           IMAGE: ${{ needs.publish_image.outputs.image }}
         run: |
           set -euo pipefail
