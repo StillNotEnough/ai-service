@@ -6,8 +6,8 @@ OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 MODELS = {
     "math": "meta-llama/llama-3.3-70b-instruct:free",
     "programming": "qwen/qwen3-coder:free",
-    "english": "deepseek/deepseek-chat-v3.1:free",
-    "general": "meta-llama/llama-3.3-70b-instruct:free",
+    "english": "xiaomi/mimo-v2-flash",
+    "general": "xiaomi/mimo-v2-flash",
 }
 
 SUBJECT_PROMPTS = {
