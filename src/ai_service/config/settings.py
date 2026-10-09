@@ -4,10 +4,10 @@ OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "sk-or-v1-YOUR-KEY-HERE")
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 
 MODELS = {
-    "math": "meta-llama/llama-3.3-70b-instruct:free",
-    "programming": "qwen/qwen3-coder:free",
-    "english": "xiaomi/mimo-v2-flash",
-    "general": "xiaomi/mimo-v2-flash",
+    "math": "thinkingmachines/inkling:free",
+    "programming": "poolside/laguna-s-2.1:free",
+    "english": "thinkingmachines/inkling:free",
+    "general": "thinkingmachines/inkling:free",
 }
 
 SUBJECT_PROMPTS = {
