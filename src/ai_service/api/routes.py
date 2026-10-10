@@ -183,25 +183,26 @@ async def chat_stream(request: ChatRequest):
                         yield f"data: {json.dumps({'error': error_msg})}\n\n"
                         return
 
-                async for line in response.aiter_lines():
-                        if line.strip():
-                            if line.startswith("data: "):
-                                data_str = line[6:]
+                    async for line in response.aiter_lines():
+                            if line.strip():
+                                if line.startswith("data: "):
+                                    data_str = line[6:]
 
-                                if data_str == "[DONE]":
-                                    print("✅ [Stream] Completed")
-                                    yield "data: [DONE]\n\n"
-                                    break
+                                    if data_str == "[DONE]":
+                                        print("✅ [Stream] Completed")
+                                        yield "data: [DONE]\n\n"
+                                        break
 
-                                try:
-                                    data_json = json.loads(data_str)
-                                    if "choices" in data_json and len(data_json["choices"]) > 0:
-                                        delta = data_json["choices"][0].get("delta", {})
-                                        content = delta.get("content", "")
-                                        if content:
-                                            yield f"data: {json.dumps({'content': content})}\n\n"
-                                except json.JSONDecodeError:
-                                    continue
+                                    try:
+                                        data_json = json.loads(data_str)
+                                        if "choices" in data_json and len(data_json["choices"]) > 0:
+                                            delta = data_json["choices"][0].get("delta", {})
+                                            content = delta.get("content", "")
+                                            if content:
+                                                chunk = json.dumps({"content": content})
+                                                yield f"data: {chunk}\n\n"
+                                    except json.JSONDecodeError:
+                                        continue
 
         except Exception as e:
             error_msg = f"Stream error: {str(e)}"
