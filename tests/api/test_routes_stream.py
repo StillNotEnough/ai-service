@@ -6,8 +6,7 @@ client = TestClient(app)
 
 
 class _FakeStreamResponse:
-    def raise_for_status(self):
-        return None
+    status_code = 200
 
     async def aiter_lines(self):
         # один кусок контента и завершение
@@ -46,3 +45,34 @@ def test_chat_stream_returns_sse(monkeypatch):
     )
     assert r.status_code == 200
     assert "text/event-stream" in r.headers.get("content-type", "")
+
+class _FakeErrorResponse:
+    status_code = 403
+
+    async def aread(self):
+        return b'{"error": "Access denied by security policy."}'
+
+
+class _FakeErrorCtx:
+    async def __aenter__(self):
+        return _FakeErrorResponse()
+
+    async def __aexit__(self, exc_type, exc, tb):
+        return False
+
+
+class _FakeErrorClient(_FakeAsyncClient):
+    def stream(self, *args, **kwargs):
+        return _FakeErrorCtx()
+
+
+def test_chat_stream_returns_upstream_error_body(monkeypatch):
+    monkeypatch.setattr("ai_service.api.routes.httpx.AsyncClient", _FakeErrorClient)
+
+    r = client.post(
+        "/api/chat/stream",
+        json={"message": "hi", "subject": "general", "conversationHistory": []},
+    )
+    assert r.status_code == 200
+    assert "OpenRouter 403" in r.text
+    assert "Access denied by security policy" in r.text

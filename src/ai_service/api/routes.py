@@ -176,9 +176,14 @@ async def chat_stream(request: ChatRequest):
                     json=payload,
                     headers=headers,
                 ) as response:
-                    response.raise_for_status()
+                    if response.status_code >= 400:
+                        body = (await response.aread()).decode(errors="replace")
+                        print(f"❌ [Stream] OpenRouter {response.status_code}: {body}")
+                        error_msg = f"OpenRouter {response.status_code}: {body[:300]}"
+                        yield f"data: {json.dumps({'error': error_msg})}\n\n"
+                        return
 
-                    async for line in response.aiter_lines():
+                async for line in response.aiter_lines():
                         if line.strip():
                             if line.startswith("data: "):
                                 data_str = line[6:]
